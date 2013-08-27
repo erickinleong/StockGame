@@ -23,7 +23,7 @@ namespace StockGame.Controllers
             var _stocks = JsonConvert.DeserializeObject<JObject>(_results.Property("quote").Value.ToString());
 
 
-            ViewBag.Message = _stocks.Property("Ask").Value.ToString();
+            ViewBag.Message = _stocks.Property("symbol").Value.ToString() + " " +  _stocks.Property("Ask").Value.ToString();
 
             //ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 
