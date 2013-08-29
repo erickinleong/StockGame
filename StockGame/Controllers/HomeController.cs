@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using StockGame.Helper;
+using System.Web.Helpers;
 
 namespace StockGame.Controllers
 {
@@ -36,6 +37,19 @@ namespace StockGame.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult GetChartImage()
+        {
+            var key = new Chart(width: 300, height: 300, theme: ChartTheme.Blue)
+                                .AddTitle("Employee Chart")
+                                .AddSeries(
+                                chartType: "Line",
+                                name: "Employee",
+                                xValue: new[] { "Peter", "Andrew", "Julie", "Dave" },
+                                yValues: new[] { "2", "7", "5", "3" });
+
+            return File(key.ToWebImage().GetBytes(), "image/jpeg");
         }
     }
 }

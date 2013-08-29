@@ -22,7 +22,7 @@ namespace StockGame.Helper
             var _stocks = JsonConvert.DeserializeObject<JObject>(_results.Property("quote").Value.ToString());
 
 
-            return new Tuple<string, string>(_stocks.Property("symbol").Value.ToString(),
+            return new Tuple<string, string>(_stocks.Property("Name").Value.ToString(),
                                              _stocks.Property("Ask").Value.ToString());
         }
 
