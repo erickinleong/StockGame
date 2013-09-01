@@ -51,5 +51,7 @@ namespace StockGame.Controllers
 
             return File(key.ToWebImage().GetBytes(), "image/jpeg");
         }
+
+
     }
 }
