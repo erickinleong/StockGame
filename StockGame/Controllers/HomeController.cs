@@ -16,7 +16,10 @@ namespace StockGame.Controllers
         public ActionResult Index()
         {
 
-            Tuple<string, string> _quote = YqlHelper.InstantPrice("0005.HK");
+            YqlHelper _yqlHelper = new YqlHelper();
+
+            Tuple<string, string> _quote = _yqlHelper.InstantPrice("0005.HK");
+            ViewBag.HistData = _yqlHelper.HistPrice("0005.HK", new DateTime(2013, 08, 01), new DateTime(2013, 08, 30));
 
             ViewBag.Message = _quote.Item1 + " " + _quote.Item2;
             //ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
