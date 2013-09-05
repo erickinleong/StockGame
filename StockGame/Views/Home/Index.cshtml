@@ -23,20 +23,19 @@
             window.onload = function () {
                 var chart = new Charts.LineChart('chart1', {
                     show_grid: true,
+                    show_x_labels:true,
                     show_y_labels: true,
-                    label_max: false,
-                    label_min: false,
-                    multi_axis: true,
-                    max_y_labels: 4,
-                    x_padding: 45
+                    label_max: true,
+                    label_min: true,
+                    multi_axis: true
                 });
                                               
 
             chart.add_line(@ViewBag.HistData);
+                chart.draw();
 
-            chart.draw();
         }
-    </script>
+        </script>
     </section>
 }
 
@@ -65,6 +64,6 @@
         <a href="http://go.microsoft.com/fwlink/?LinkId=245157">Learn more…</a>
     </li>
     <li class="four">
-        <div id='chart1' style='width: 800px; height: 400px;'></div>
+        <div id='chart1' style='width: 1000px; height: 400px;'></div>
     </li>
 </ol>
