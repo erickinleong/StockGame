@@ -26,7 +26,6 @@ namespace StockGame.Helper
 
             JObject _resultObject = (JObject)JObject.Parse(_result)["query"]["results"]["option"];
 
-
             return new Tuple<string, string>(_resultObject.Property("sym").Value.ToString(),
                                              _resultObject.Property("price").Value.ToString());
         }
