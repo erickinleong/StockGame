@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using RestSharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Web.Helpers;
 using System.Text;
+using System.Net;
 
 namespace StockGame.Helper
 {
@@ -14,50 +14,50 @@ namespace StockGame.Helper
     {
         public Tuple<string, string> InstantPrice(String quote)
         {
-            var _client = new RestClient(_YqlBaseAddress);
-
+            //Build Yahoo Query request address
             StringBuilder _webAddress = new StringBuilder();
-            _webAddress.Append("?q=" + System.Web.HttpUtility.UrlEncode("SELECT * FROM yahoo.finance.oquote WHERE symbol="));
-            _webAddress.Append("'" + quote + "'");
-            _webAddress.Append("&format=json");
-            _webAddress.Append("&env=http%3A%2F%2Fdatatables.org%2Falltables.env&callback=");
+            _webAddress.Append(_YqlBaseAddress);
+            _webAddress.Append("?q=" + "SELECT%20*%20FROM%20yahoo.finance.quote%20WHERE%20symbol%3D");
+            _webAddress.Append("%22" + quote + "%22");
+            _webAddress.Append(_YqlRequestAttribute);
 
-            var _result = _client.Execute(new RestRequest(_webAddress.ToString(), Method.GET)).Content;
 
-            JObject _resultObject = (JObject)JObject.Parse(_result)["query"]["results"]["option"];
+            string _yqlresult = new WebClient().DownloadString(_webAddress.ToString());
 
-            return new Tuple<string, string>(_resultObject.Property("sym").Value.ToString(),
-                                             _resultObject.Property("price").Value.ToString());
+            JObject _resultObject = (JObject)JObject.Parse(_yqlresult)["query"]["results"]["quote"];
+
+            return new Tuple<string, string>(_resultObject.Property("Name").Value.ToString(),
+                                             _resultObject.Property("DaysHigh").Value.ToString());
         }
 
         public string HistPrice(string quote, DateTime startDate, DateTime endDate)
         {
-            var _client = new RestClient(_YqlBaseAddress);
-
+            //Build Yahoo Query request address
             StringBuilder _webAddress = new StringBuilder();
-            _webAddress.Append("?q=" + System.Web.HttpUtility.UrlEncode("select * from yahoo.finance.historicaldata where symbol = "));
-            _webAddress.Append("'" + quote + "'");
-            _webAddress.Append("and startDate = '" + startDate.ToString("yyyy-MM-dd") + "'");
-            _webAddress.Append("and endDate = '" + endDate.ToString("yyyy-MM-dd") + "'");
-            _webAddress.Append("&format=json");
-            _webAddress.Append("&env=http%3A%2F%2Fdatatables.org%2Falltables.env&callback=");
+            _webAddress.Append(_YqlBaseAddress);
+            _webAddress.Append("?q=" + "SELECT%20*%20FROM%20yahoo.finance.historicaldata%20WHERE%20symbol%3D");
+            _webAddress.Append("%22" + quote + "%22");
+            _webAddress.Append("and%20startDate=%22" + startDate.ToString("yyyy-MM-dd") + "%22");
+            _webAddress.Append("and%20endDate=%22" + endDate.ToString("yyyy-MM-dd") + "%22");
+            _webAddress.Append(_YqlRequestAttribute);
 
-            string _yqlResult = _client.Execute(new RestRequest(_webAddress.ToString(), Method.GET)).Content;
+            string _yqlResult = new WebClient().DownloadString(_webAddress.ToString());
 
             JArray _jArray = (JArray)JObject.Parse(_yqlResult)["query"]["results"]["quote"];
 
-            string _result = "{data: [";
+            string _jsonResult = "{data: [";
             foreach (var q in _jArray)
             {
                 DateTime _date = DateTime.Parse(q["date"].ToString());
-                _result = _result + "[" + _date.Day.ToString() + "," + q["High"] + "],";
+                _jsonResult = _jsonResult + "[" + _date.Day.ToString() + "," + q["High"] + "],";
             }
-            _result = _result.Remove(_result.Length - 1);
-            _result = _result + "] }";
+            _jsonResult = _jsonResult.Remove(_jsonResult.Length - 1);
+            _jsonResult = _jsonResult + "] }";
 
-            return _result;
+            return _jsonResult;
         }
 
         private string _YqlBaseAddress = "http://query.yahooapis.com/v1/public/yql";
+        private string _YqlRequestAttribute = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
     }
 }

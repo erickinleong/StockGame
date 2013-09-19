@@ -1,0 +1,28 @@
+﻿@*Introduce JQuery *@
+@Scripts.Render("~/bundles/jquery")
+
+<script src="~/Scripts/raphael-min.js" type="text/javascript"></script>
+<script src="~/Scripts/charts.min.js" type="text/javascript" ></script>
+
+<script type="text/javascript">
+    window.onload = function () {
+
+        $("#ChartDiv").css("height", "@Model["Height"]");
+        $("#ChartDiv").css("width", "@Model["Width"]");
+
+        var chart = new Charts.LineChart('ChartDiv', {
+            show_grid: true,
+            show_x_labels:true,
+            show_y_labels: true,
+            label_max: true,
+            label_min: true,
+            multi_axis: true
+        });
+
+
+        chart.add_line(@Model["Data"]);
+        chart.draw();
+
+}
+</script>
+<div id='ChartDiv'></div>

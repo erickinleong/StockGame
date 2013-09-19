@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestSharp;
 using StockGame.Helper;
 using System.Web.Helpers;
 
@@ -42,19 +41,21 @@ namespace StockGame.Controllers
             return View();
         }
 
-        public ActionResult GetChartImage()
+        [HttpGet]
+        [ChildActionOnly]
+        public ActionResult GetHistPriceChart()
         {
-            var key = new Chart(width: 300, height: 300, theme: ChartTheme.Blue)
-                                .AddTitle("Employee Chart")
-                                .AddSeries(
-                                chartType: "Line",
-                                name: "Employee",
-                                xValue: new[] { "Peter", "Andrew", "Julie", "Dave" },
-                                yValues: new[] { "2", "7", "5", "3" });
+            YqlHelper _yqlHelper = new YqlHelper();
 
-            return File(key.ToWebImage().GetBytes(), "image/jpeg");
+            ViewDataDictionary _chartInfo = new ViewDataDictionary();
+            _chartInfo.Add(new KeyValuePair<string, object>("Data", _yqlHelper.HistPrice("0005.HK",
+                                                                                        new DateTime(2013, 08, 01),
+                                                                                        new DateTime(2013, 08, 30))));
+            _chartInfo.Add(new KeyValuePair<string, object>("Height", 400));
+            _chartInfo.Add(new KeyValuePair<string, object>("Width", 1000));
+
+            return PartialView("HistPriceChart", _chartInfo);
         }
-
 
     }
 }
