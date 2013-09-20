@@ -9,6 +9,7 @@
 
         $("#ChartDiv").css("height", "@Model["Height"]");
         $("#ChartDiv").css("width", "@Model["Width"]");
+        $('#myDiv').css("text-align", "center");
 
         var chart = new Charts.LineChart('ChartDiv', {
             show_grid: true,
@@ -25,4 +26,5 @@
 
 }
 </script>
+<h2 id="myDiv">@Model["CompanyName"]</h2>
 <div id='ChartDiv'></div>

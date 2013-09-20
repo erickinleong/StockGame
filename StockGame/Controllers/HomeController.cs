@@ -14,16 +14,6 @@ namespace StockGame.Controllers
     {
         public ActionResult Index()
         {
-
-            YqlHelper _yqlHelper = new YqlHelper();
-
-            Tuple<string, string> _quote = _yqlHelper.InstantPrice("0005.HK");
-            ViewBag.HistData = _yqlHelper.HistPrice("0005.HK", new DateTime(2013, 08, 01), new DateTime(2013, 08, 30));
-
-            ViewBag.Message = _quote.Item1 + " " + _quote.Item2;
-            ViewBag.Sym = _quote.Item1;
-
-
             return View();
         }
 
@@ -39,22 +29,6 @@ namespace StockGame.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-        [HttpGet]
-        [ChildActionOnly]
-        public ActionResult GetHistPriceChart()
-        {
-            YqlHelper _yqlHelper = new YqlHelper();
-
-            ViewDataDictionary _chartInfo = new ViewDataDictionary();
-            _chartInfo.Add(new KeyValuePair<string, object>("Data", _yqlHelper.HistPrice("0005.HK",
-                                                                                        new DateTime(2013, 08, 01),
-                                                                                        new DateTime(2013, 08, 30))));
-            _chartInfo.Add(new KeyValuePair<string, object>("Height", 400));
-            _chartInfo.Add(new KeyValuePair<string, object>("Width", 1000));
-
-            return PartialView("HistPriceChart", _chartInfo);
         }
 
     }

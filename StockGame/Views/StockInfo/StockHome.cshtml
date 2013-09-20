@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = "StcokInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>StcokInfo</h2>*@
+
+@Html.Action("HistPriceChart", "StockInfo", new { _quoteNum = "0005.HK" })
