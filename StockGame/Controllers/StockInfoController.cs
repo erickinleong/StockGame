@@ -36,5 +36,12 @@ namespace StockGame.Controllers
             return PartialView("_HistPriceChartPartial", _chartInfo);
         }
 
+        public ActionResult AnotherHistPriceChart()
+        {
+            string _quoteNum = "0005.HK";
+            YqlHelper _yqlHelper = new YqlHelper();
+            return View(_yqlHelper.AnotherHistPrice(_quoteNum, new DateTime(2013, 08, 01), new DateTime(2013, 08, 30)));
+        }
+
     }
 }
