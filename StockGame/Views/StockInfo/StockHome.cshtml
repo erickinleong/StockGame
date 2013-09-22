@@ -3,8 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@*<h2>StcokInfo</h2>*@
+<h2>Stcok Info</h2>
 
-@*@Html.Action("HistPriceChart", "StockInfo", new { _quoteNum = "0005.HK" })*@
 
-<h1>@Html.ActionLink("Chart", "HistPriceChart", "StockInfo")</h1>
+@{Html.RenderAction("HistPriceChart", "StockInfo", new { _quoteNum = "0005.HK" });}

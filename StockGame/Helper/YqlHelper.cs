@@ -14,7 +14,6 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using Point = DotNet.Highcharts.Options.Point;
 using Chart = DotNet.Highcharts.Options.Chart;
-using RestSharp;
 
 namespace StockGame.Helper
 {
@@ -23,71 +22,43 @@ namespace StockGame.Helper
         public InstantStockModel InstantPrice(String quote)
         {
             //Build Yahoo Query request address
-            StringBuilder _webAddress = new StringBuilder();
+            StringBuilder webAddress = new StringBuilder();
 
-            _webAddress.Append("http://finance.yahoo.com/d/quotes.csv?s=" + quote + "&f=snbaopl1");
+            webAddress.Append("http://finance.yahoo.com/d/quotes.csv?s=" + quote + "&f=snbaopl1");
 
-            InstantStockModel _yqlresult = _instStockDataConverter(new WebClient().DownloadString(_webAddress.ToString()));
+            InstantStockModel result = _instStockDataConverter(new WebClient().DownloadString(webAddress.ToString()));
 
-            return _yqlresult;
+            return result;
         }
 
-        public string HistPrice(string quote, DateTime startDate, DateTime endDate)
-        {
-            //Build Yahoo Query request address
-            StringBuilder _webAddress = new StringBuilder();
-            _webAddress.Append(_YqlBaseAddress);
-            _webAddress.Append("?q=" + "SELECT%20*%20FROM%20yahoo.finance.historicaldata%20WHERE%20symbol%3D");
-            _webAddress.Append("%22" + quote + "%22");
-            _webAddress.Append("and%20startDate=%22" + startDate.ToString("yyyy-MM-dd") + "%22");
-            _webAddress.Append("and%20endDate=%22" + endDate.ToString("yyyy-MM-dd") + "%22");
-            _webAddress.Append(_YqlRequestAttribute);
-
-            string _yqlResult = new WebClient().DownloadString(_webAddress.ToString());
-
-            JArray _jArray = (JArray)JObject.Parse(_yqlResult)["query"]["results"]["quote"];
-
-            string _jsonResult = "{data: [";
-            foreach (var q in _jArray)
-            {
-                DateTime _date = DateTime.Parse(q["date"].ToString());
-
-                _jsonResult = _jsonResult + "[" + DateTimeHelper.ToJsonTicks(_date) + "," + q["High"] + "],";
-            }
-            _jsonResult = _jsonResult.Remove(_jsonResult.Length - 1);
-            _jsonResult = _jsonResult + "] }";
-
-            return _jsonResult;
-        }
-
-        public Highcharts AnotherHistPrice(string quote, DateTime startDate, DateTime endDate)
+        public Highcharts HistPriceChart(string quote, DateTime startDate, DateTime endDate)
         {
 
             //Build Yahoo Query request address
-            StringBuilder _webAddress = new StringBuilder();
+            StringBuilder webAddress = new StringBuilder();
 
-            _webAddress.Append("http://ichart.finance.yahoo.com/table.csv?s=" + quote);
-            _webAddress.Append("&d=" + (endDate.Month - 1));
-            _webAddress.Append("&e=" + (endDate.Day));
-            _webAddress.Append("&f=" + (endDate.Year));
-            _webAddress.Append("&g=d&a=" + (startDate.Month - 1));
-            _webAddress.Append("&b=" + (startDate.Day));
-            _webAddress.Append("&c=" + (startDate.Year));
-            _webAddress.Append("&ignore=.csv");
+            webAddress.Append("http://ichart.finance.yahoo.com/table.csv?s=" + quote);
+            webAddress.Append("&d=" + (endDate.Month - 1));
+            webAddress.Append("&e=" + (endDate.Day));
+            webAddress.Append("&f=" + (endDate.Year));
+            webAddress.Append("&g=d&a=" + (startDate.Month - 1));
+            webAddress.Append("&b=" + (startDate.Day));
+            webAddress.Append("&c=" + (startDate.Year));
+            webAddress.Append("&ignore=.csv");
 
-            List<HistoricalStockModel> _histStockPriceList = _histStockDataConverter(new WebClient().DownloadString(_webAddress.ToString()));
+            List<HistoricalStockModel> histStockPriceList = _histStockDataConverter(new WebClient().DownloadString(webAddress.ToString()));
 
-            Dictionary<DateTime, double> _chartData = new Dictionary<DateTime, double>();
+            Dictionary<DateTime, double> stockData = new Dictionary<DateTime, double>();
 
-            foreach (var _hist in _histStockPriceList) 
+            foreach (var _hist in histStockPriceList) 
             {
-                _chartData.Add(_hist.Date, _hist.High); 
+                stockData.Add(_hist.Date, _hist.High); 
             }
 
 
-            object[,] chartData = new object[_chartData.Count, 2];
+            object[,] chartData = new object[stockData.Count, 2];
             int i = 0;
-            foreach (KeyValuePair<DateTime, double> pair in _chartData)
+            foreach (KeyValuePair<DateTime, double> pair in stockData)
             {
                 chartData.SetValue(pair.Key, i, 0);
                 chartData.SetValue(pair.Value, i, 1);
@@ -96,7 +67,7 @@ namespace StockGame.Helper
 
             Highcharts chart1 = new Highcharts("chart1")
                 .InitChart(new Chart { Type = ChartTypes.Line })
-                .SetTitle(new Title { Text = InstantPrice("0005.HK").Name, Style = "color: '#999',fontWeight: 'bold', fontSize: 'large'" })
+                .SetTitle(new Title { Text = InstantPrice(quote).Name, Style = "color: '#000',fontWeight: 'bold', fontSize: 'large'" })
                 .SetXAxis(new XAxis { Type = AxisTypes.Datetime })
                 .SetSeries(new Series { Data = new Data(chartData), Name = "Price" });
 
@@ -162,8 +133,6 @@ namespace StockGame.Helper
             
         }
 
-        private string _YqlBaseAddress = "http://query.yahooapis.com/v1/public/yql";
-        private string _YqlRequestAttribute = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
     }
 
 }
