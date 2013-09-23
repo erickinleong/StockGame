@@ -99,7 +99,10 @@ namespace StockGame.Helper
                 }
                 catch (FormatException ex)
                 {
-                    continue;
+                    prices.Ask = 0;
+                    prices.Open = 0;
+                    prices.PreviousClose = 0;
+                    prices.Last = 0;
                 }
             }
             return prices;
