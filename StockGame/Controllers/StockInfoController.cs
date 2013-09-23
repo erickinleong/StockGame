@@ -21,7 +21,7 @@ namespace StockGame.Controllers
         {
             //string _quoteNum = "0005.HK";
             YqlHelper _yqlHelper = new YqlHelper();
-            return PartialView(_yqlHelper.HistPriceChart(_quoteNum, new DateTime(2013, 09, 01), new DateTime(2013, 09, 30)));
+            return PartialView(_yqlHelper.HistPriceChart(_quoteNum, DateTime.Now.AddMonths(-5), DateTime.Now));
         }
 
 

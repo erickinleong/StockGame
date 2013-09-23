@@ -22,9 +22,9 @@ namespace StockGame
             //    consumerKey: "",
             //    consumerSecret: "");
 
-            //OAuthWebSecurity.RegisterFacebookClient(
-            //    appId: "",
-            //    appSecret: "");
+            OAuthWebSecurity.RegisterFacebookClient(
+                appId: "510908485661555",
+                appSecret: "b846f25b00a19a63ac070f3afdce9ade");
 
             //OAuthWebSecurity.RegisterGoogleClient();
         }

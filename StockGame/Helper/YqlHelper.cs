@@ -69,7 +69,7 @@ namespace StockGame.Helper
                 .InitChart(new Chart { Type = ChartTypes.Line })
                 .SetTitle(new Title { Text = InstantPrice(quote).Name, Style = "color: '#000',fontWeight: 'bold', fontSize: 'large'" })
                 .SetXAxis(new XAxis { Type = AxisTypes.Datetime })
-                .SetSeries(new Series { Data = new Data(chartData), Name = "Price" });
+                .SetSeries(new Series { Data = new Data(chartData)});
 
             return chart1;
         }
@@ -86,19 +86,22 @@ namespace StockGame.Helper
 
                 string[] cols = row.Split(',');
 
-                //InstantStockModel p = new InstantStockModel();
                 prices.Symbol = cols[0];
                 prices.Name = cols[1];
                 prices.Name = prices.Name.Replace("\"", "");
                 //p.Bid = Convert.ToDecimal(cols[2]);
-                prices.Ask = Convert.ToDecimal(cols[3]);
-                prices.Open = Convert.ToDecimal(cols[4]);
-                prices.PreviousClose = Convert.ToDecimal(cols[5]);
-                prices.Last = Convert.ToDecimal(cols[6]);
-
-                //prices.Add(p);
+                try
+                {
+                    prices.Ask = Convert.ToDecimal(cols[3]);
+                    prices.Open = Convert.ToDecimal(cols[4]);
+                    prices.PreviousClose = Convert.ToDecimal(cols[5]);
+                    prices.Last = Convert.ToDecimal(cols[6]);
+                }
+                catch (FormatException ex)
+                {
+                    continue;
+                }
             }
-
             return prices;
         }
 
